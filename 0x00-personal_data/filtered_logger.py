@@ -25,6 +25,9 @@ class RedactingFormatter(logging.Formatter):
         )
 
 
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
 def get_logger() -> logging.Logger:
     """
     Returns a logging object
@@ -33,9 +36,7 @@ def get_logger() -> logging.Logger:
     logger.setLevel(logging.INFO)
     logger.propagate = False
     handler = logging.StreamHandler()
-    handler.setFormatter(
-        RedactingFormatter(list(("name", "email", "phone", "ssn", "password")))
-    )
+    handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
     logger.addHandler(handler)
     return logger
 
