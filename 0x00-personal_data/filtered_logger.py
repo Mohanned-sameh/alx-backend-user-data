@@ -5,6 +5,8 @@ function that returns log message obfuscated
 from typing import List
 import re
 import logging
+import os
+import mysql.connector
 
 
 class RedactingFormatter(logging.Formatter):
@@ -54,3 +56,14 @@ def filter_datum(
             message,
         )
     return message
+
+
+def get_db() -> mysql.connector.connection.MYSQLConnection:
+    """Connection to MySQL environment"""
+    db_connect = mysql.connector.connect(
+        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
+        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
+        database=os.getenv("PERSONAL_DATA_DB_NAME"),
+    )
+    return db_connect
