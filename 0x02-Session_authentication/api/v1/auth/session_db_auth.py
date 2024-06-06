@@ -14,46 +14,43 @@ class SessionDBAuth(SessionExpAuth):
 
     def create_session(self, user_id=None):
         """
-        Create a Session ID for a user_id
+        Creates a new session for a user
         Args:
-           user_id (str): user id
+            user_id (str): user id
         """
+        if not user_id:
+            return None
         session_id = super().create_session(user_id)
         if not session_id:
             return None
-        kw = {
-            "user_id": user_id,
-            "session_id": session_id
-        }
-        user = UserSession(**kw)
-        user.save()
+        UserSession(user_id=user_id, session_id=session_id).save()
         return session_id
 
     def user_id_for_session_id(self, session_id=None):
         """
-        Returns a user ID based on a session ID
+        Returns a User ID based on a Session ID
         Args:
-            session_id (str): session ID
-        Return:
-            user id or None if session_id is None or not a string
+            session_id (str): session id
         """
-        user_id = UserSession.search({"session_id": session_id})
-        if user_id:
-            return user_id
-        return None
+        if not session_id:
+            return None
+        user = UserSession.search({"session_id": session_id})
+        if not user:
+            return None
+        user = user[0]
+        return user.user_id
 
     def destroy_session(self, request=None):
         """
-        Destroy a UserSession instance based on a
-        Session ID from a request cookie
+        Deletes the user session / logout
+        Args:
+            request (obj): request object
         """
-        if request is None:
-            return False
         session_id = self.session_cookie(request)
         if not session_id:
             return False
-        user_session = UserSession.search({"session_id": session_id})
-        if user_session:
-            user_session[0].remove()
-            return True
-        return False
+        user_id = self.user_id_for_session_id(session_id)
+        if not user_id:
+            return False
+        UserSession.delete(user_id)
+        return True
