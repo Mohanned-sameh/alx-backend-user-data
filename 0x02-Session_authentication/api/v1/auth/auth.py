@@ -3,6 +3,7 @@
 
 
 from typing import List, TypeVar
+from os import getenv
 
 
 class Auth:
@@ -46,3 +47,10 @@ class Auth:
     def current_user(self, request=None) -> TypeVar("User"):  # type: ignore
         """Current user"""
         return None
+
+    def session_cookie(self, request=None):
+        """Session cookie"""
+        if request is None:
+            return None
+        session_name = getenv("SESSION_NAME")
+        return request.cookies.get(session_name)
