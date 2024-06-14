@@ -1,12 +1,15 @@
 """DB module
 """
 
+import logging
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from user import User
 from user import Base
+
+logging.disable(logging.WARNING)
 
 
 class DB:
@@ -33,7 +36,3 @@ class DB:
         self._session.add(user)
         self._session.commit()
         return user
-
-    def close(self) -> None:
-        """Close the session"""
-        self._session.close()
