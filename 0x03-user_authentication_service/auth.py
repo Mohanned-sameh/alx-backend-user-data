@@ -5,7 +5,7 @@ auth file
 from db import DB
 import bcrypt
 from user import User
-
+from sqlalchemy.exc import NoResultFound
 import logging
 
 logging.disable(logging.WARNING)
@@ -21,14 +21,14 @@ class Auth:
 
     def __init__(self):
         """Constructor"""
-        self.db = DB()
+        self._db = DB()
 
     def register_user(self, email: str, password: str) -> User:
         """Register a user"""
         try:
             self._db.find_user_by(email=email)
             raise ValueError(f"User {email} already exists")
-        except NoResultFound:  # type: ignore
+        except NoResultFound:
             pass
         hashed_password = _hash_password(password)
         user = self._db.add_user(email, hashed_password)
