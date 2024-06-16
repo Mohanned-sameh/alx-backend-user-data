@@ -2,7 +2,7 @@
 """
 flask app
 """
-from flask import Flask, abort, request, jsonify
+from flask import Flask, abort, request, jsonify, redirect
 import logging
 from auth import Auth
 
@@ -56,12 +56,15 @@ def logout() -> str:
     logout endpoint
     """
     session_id = request.cookies.get("session_id")
-    email = AUTH.get_user_from_session_id(session_id)
-    if email:
-        AUTH.destroy_session(email)
-        return jsonify({"message": "Bienvenue"})
-    else:
+    # Retrieve the user associated with the session ID
+    user = AUTH.get_user_from_session_id(session_id)
+    # If no user is found, abort the request with a 403 Forbidden error
+    if user is None:
         abort(403)
+    # Destroy the session associated with the user
+    AUTH.destroy_session(user.id)
+    # Redirect to the home route
+    return redirect("/")
 
 
 @app.route("/profile", methods=["GET"], strict_slashes=False)
