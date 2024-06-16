@@ -79,7 +79,11 @@ def update_password(email: str, password: str, new_password: str) -> None:
     update password
     """
     url = f"{BASE_URL}/reset_password"
-    data = {"email": email, "new_password": new_password, "reset_token": password}
+    data = {
+        "email": email,
+        "new_password": new_password,
+        "reset_token": password,
+    }
     response = requests.put(url, data=data)
     assert response.status_code == 403
 
