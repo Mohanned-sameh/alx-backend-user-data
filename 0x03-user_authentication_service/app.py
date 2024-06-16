@@ -73,11 +73,13 @@ def profile() -> str:
     profile endpoint
     """
     session_id = request.cookies.get("session_id")
-    email = AUTH.get_user_from_session_id(session_id)
-    if email:
-        return jsonify({"email": email})
-    else:
+    # Retrieve the user associated with the session ID
+    user = AUTH.get_user_from_session_id(session_id)
+    # If no user is found, abort the request with a 403 Forbidden error
+    if user is None:
         abort(403)
+    # Return the user's email as a JSON payload
+    return jsonify({"email": user.email})
 
 
 if __name__ == "__main__":
