@@ -2,9 +2,14 @@
 """
 flask app
 """
-from flask import Flask
+from flask import Flask, abort, request, jsonify
+import logging
+from auth import Auth
 
+AUTH = Auth()
 app = Flask(__name__)
+
+logging.disable(logging.WARNING)
 
 
 @app.route("/", methods=["GET"], strict_slashes=False)
@@ -12,7 +17,7 @@ def home() -> str:
     """
     home endpoint
     """
-    Flask.jsonify({"message": "Bienvenue"})
+    return jsonify({"message": "Bienvenue"})
 
 
 if __name__ == "__main__":
